@@ -1,28 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
 
-const ServerStatus = () => {
-  const [isServerUp, setIsServerUp] = useState(false);
+function ServerStatusChecker() {
+  const [status, setStatus] = useState(null);
 
-  useEffect(() => {
-    const checkServerStatus = async () => {
-      try {
-        const response = await axios.get('http://example.com/api/healthcheck');
-        setIsServerUp(response.status === 200);
-      } catch (error) {
-        setIsServerUp(false);
-      }
-    };
+  const checkStatus = () => {
+    axios.get("https://your-server-url.com")
+      .then(response => {
+        setStatus("Server is up and running!");
+      })
+      .catch(error => {
+        setStatus("Server is down :(");
+      });
+  };
 
-    checkServerStatus();
-    setInterval(checkServerStatus, 30000); // check server status every 30 seconds
-  }, []);
+  // Poll server status every 10 seconds
+  setInterval(checkStatus, 10000);
 
   return (
     <div>
-      <h2>Server Status: {isServerUp ? 'UP' : 'DOWN'}</h2>
+      <h1>Server Status Checker</h1>
+      <button onClick={checkStatus}>Check Status</button>
+      {status && <p>{status}</p>}
     </div>
   );
-};
+}
 
-export default ServerStatus;
+export default ServerStatusChecker;
